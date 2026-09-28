@@ -1,0 +1,7 @@
+BOOKOLIA – carnet de lecture installable
+
+Contenu : index.html (l'app), manifest.webmanifest, sw.js (mode hors ligne), dossier icons.
+
+Changer le nom : dans index.html (ligne APP_NAME) et dans manifest.webmanifest ("name" et "short_name").
+Après toute modification du site : augmente VERSION dans sw.js (v1 -> v2) pour que les téléphones récupèrent la nouvelle version.
+Données : stockées sur le téléphone. Pense à utiliser « Exporter mes données » (onglet Statistiques).
