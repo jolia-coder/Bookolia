@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#18201C" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Carnet de lecture : étagère, progression, citations et statistiques.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -67,7 +67,24 @@ section.view.on{display:block}
 
 /* Étagère */
 .shelf{margin-bottom:26px}
-.shelf-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;width:100%;border:0;background:none;padding:4px 0;text-align:left}
+.see-all{color:var(--accent)!important;font-weight:600}
+.h2-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.h2-row button{border:0;background:none;color:var(--accent);font-weight:600;font-size:14px;padding:4px 0}
+.lib-top{background:var(--accent-soft)}
+.sheet:has(.lib-top){height:92vh}
+.lib-top h2,.lib-top p{color:var(--ink)!important}
+.lib-tools{display:flex;gap:8px;margin:14px 0 16px}
+.lib-tools input,.lib-tools select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);min-width:0}
+.lib-tools input{flex:1}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:16px 12px}
+.lib-item{border:0;background:none;padding:0;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0}
+.lib-cover{display:flex;align-items:flex-end;aspect-ratio:2/3;border-radius:4px 8px 8px 4px;overflow:hidden;box-shadow:inset 5px 0 0 rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.08);padding:8px;margin-bottom:4px}
+.lib-cover img{width:calc(100% + 16px);height:calc(100% + 16px);margin:-8px;object-fit:cover}
+.lib-cover span{font:600 15px/1.15 var(--serif);color:#22312A;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.lib-t{font-weight:600;font-size:14px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lib-a,.lib-r{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-r{color:#A88633}
 .shelf-head h3{font:600 20px var(--serif);margin:0}
 .shelf-head span{color:var(--muted);font-size:14px}
 .rail{overflow-x:auto;padding-bottom:4px}
@@ -123,9 +140,10 @@ nav.tabs button[aria-current="page"]{color:var(--accent)}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}.spine{transition:none}}
 .sheet-top{padding:22px 20px 18px;position:relative}
-.sheet-top h2{margin:0 36px 2px 0;font-size:27px;color:#22312A}
+.sheet-top h2{margin:0 0 2px 0;font-size:27px;color:#22312A}
 .sheet-top p{margin:0;color:#44554B}
-.close{position:absolute;top:14px;right:14px;border:0;background:rgba(255,255,255,.6);width:34px;height:34px;border-radius:50%;font-size:20px;line-height:1;color:#22312A}
+.back{display:inline-flex;align-items:center;gap:4px;border:0;background:rgba(255,255,255,.7);border-radius:999px;padding:8px 14px 8px 8px;margin-bottom:14px;font-size:15px;font-weight:600;color:#22312A}
+.back svg{width:20px;height:20px}
 .sheet-body{padding:18px 20px 0}
 .field{margin-bottom:16px}
 .field label,.lbl{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
@@ -144,9 +162,11 @@ nav.tabs button[aria-current="page"]{color:var(--accent)}
 .progress-box .line{display:flex;gap:8px;align-items:center;margin-top:10px}
 .progress-box input[type=number]{width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .progress-box input[type=range]{width:100%;accent-color:var(--accent)}
-.stars{display:flex;gap:2px}
-.star{border:0;background:none;font-size:28px;line-height:1;padding:2px;color:var(--line)}
-.star.on{color:#C9A24A}
+.rating{display:flex;align-items:center;gap:12px}
+.stars{display:flex;gap:2px;cursor:pointer;touch-action:manipulation;border-radius:8px}
+.star{display:block;width:34px;height:34px}
+.star svg{width:100%;height:100%;display:block}
+.rate-txt{font-size:14px;color:var(--muted)}
 .qitem{border-left:3px solid var(--accent);padding:4px 0 4px 12px;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px}
 .qitem p{margin:0;font:500 17px/1.5 var(--serif)}
 .qitem small{color:var(--muted)}
@@ -267,7 +287,7 @@ function renderShelf(){
   const reading = state.books.filter(b => b.status === "en-cours");
   let html = "";
   if (reading.length){
-    html += `<div class="block"><h2>En ce moment</h2><div class="current">` + reading.map(b => `
+    html += `<div class="block"><div class="h2-row"><h2>En ce moment</h2><button data-lib="en-cours">Tout voir ›</button></div><div class="current">` + reading.map(b => `
       <button class="cur" data-open="${b.id}">
         <span class="mini" style="background:${b.color}">${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}</span>
         <span style="flex:1;min-width:0">
@@ -281,7 +301,7 @@ function renderShelf(){
     if (key === "en-cours") continue;
     const list = state.books.filter(b => b.status === key);
     if (key === "abandon" && !list.length) continue;
-    html += `<div class="shelf"><div class="shelf-head"><h3>${label}</h3><span>${list.length} livre${list.length>1?"s":""}</span></div>
+    html += `<div class="shelf"><button class="shelf-head" data-lib="${key}"><h3>${label}</h3><span class="see-all">${list.length} livre${list.length>1?"s":""} ›</span></button>
       <div class="rail"><div class="row">${list.length ? list.map(spine).join("") : `<span class="empty-row">Aucun livre ici pour l'instant.</span>`}</div></div></div>`;
   }
   v.innerHTML = html;
@@ -300,7 +320,7 @@ function renderStats(){
   if (!byDay[today(d)]) d.setDate(d.getDate()-1);
   while (byDay[today(d)]) { streak++; d.setDate(d.getDate()-1); }
   const rated = state.books.filter(b => b.rating);
-  const avg = rated.length ? (rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1) : "–";
+  const avg = rated.length ? (rated.reduce((s,b)=>s+b.rating,0)/rated.length).toFixed(1).replace(".", ",") : "–";
 
   const goal = Math.max(1, state.goal || 1);
   const r = 44, C = 2*Math.PI*r, frac = Math.min(1, doneYear.length/goal);
@@ -467,22 +487,82 @@ function wireSearch(onPick){
   $("#sQuery").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); run(); } };
 }
 
+const STAR = "M12 2.6l2.8 5.9 6.5.8-4.8 4.5 1.2 6.4L12 17l-5.7 3.2 1.2-6.4-4.8-4.5 6.5-.8z";
+function starsHTML(r){
+  return [1,2,3,4,5].map(n => {
+    const w = r >= n ? 24 : r >= n - 0.5 ? 12 : 0;
+    return `<span class="star" data-n="${n}"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="sc${n}"><rect width="${w}" height="24"/></clipPath></defs><path d="${STAR}" fill="var(--line)"/><path d="${STAR}" fill="#C9A24A" clip-path="url(#sc${n})"/></svg></span>`;
+  }).join("");
+}
+
 /* ---------- Feuilles ---------- */
 function openSheet(html, color){
+  // Le bouton retour d'Android ferme la fiche au lieu de quitter l'app
+  if (!$("#veil").classList.contains("on")) history.pushState({ sheet: 1 }, "");
   $("#sheet").innerHTML = html;
+  $("#sheet").scrollTop = 0;
   $("#veil").classList.add("on");
   document.body.style.overflow = "hidden";
   const f = $("#sheet").querySelector("input,button"); if (f) f.focus({preventScroll:true});
 }
-function closeSheet(){ $("#veil").classList.remove("on"); document.body.style.overflow = ""; render(); }
+function hideSheet(){ libView = null; $("#veil").classList.remove("on"); document.body.style.overflow = ""; render(); }
+function closeSheet(){ if (history.state && history.state.sheet) history.back(); else hideSheet(); }
+window.addEventListener("popstate", () => {
+  if (!$("#veil").classList.contains("on")) return;
+  if (history.state && history.state.sheet === 1 && libView) showLibrary(); else hideSheet();
+});
+
+/* ---------- Bibliothèque complète ---------- */
+const BACK_BTN = '<button class="back" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Retour</button>';
+let libView = null;
+const SORTS = [["added","Ajout récent"],["finished","Lecture récente"],["title","Titre A → Z"],["author","Auteur A → Z"],["rating","Mieux notés"]];
+function openLibrary(status){ libView = { status, q: "", sort: status === "lu" ? "finished" : "added" }; showLibrary(); }
+function showLibrary(){
+  openSheet(`
+    <div class="sheet-top lib-top">${BACK_BTN}<h2>Ma bibliothèque</h2><p id="libCount"></p></div>
+    <div class="sheet-body">
+      <div class="chips" id="libStatus">${[["all","Tous"], ...STATUS].map(([k,l]) => `<button class="chip" data-s="${k}" aria-pressed="${k===libView.status}">${l}</button>`).join("")}</div>
+      <div class="lib-tools">
+        <input id="libQ" type="search" placeholder="Titre, auteur…" value="${esc(libView.q)}" aria-label="Rechercher dans la bibliothèque">
+        <select id="libSort" aria-label="Trier">${SORTS.map(([k,l]) => `<option value="${k}" ${k===libView.sort?"selected":""}>${l}</option>`).join("")}</select>
+      </div>
+      <div class="lib-grid" id="libGrid"></div>
+    </div>`);
+  $("#libStatus").onclick = e => { const k = e.target.dataset.s; if (!k) return; libView.status = k;
+    $("#libStatus").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.s === k)); drawLibrary(); };
+  $("#libQ").oninput = e => { libView.q = e.target.value; drawLibrary(); };
+  $("#libSort").onchange = e => { libView.sort = e.target.value; drawLibrary(); };
+  drawLibrary();
+}
+function drawLibrary(){
+  const q = libView.q.trim().toLowerCase();
+  let list = state.books.filter(b => (libView.status === "all" || b.status === libView.status)
+    && (!q || (b.title + " " + (b.author||"")).toLowerCase().includes(q)));
+  const cmp = (a, b) => (a||"").localeCompare(b||"", "fr", { sensitivity: "base" });
+  const sorters = {
+    added: (a,b) => cmp(b.added, a.added), finished: (a,b) => cmp(b.finished || b.started || b.added, a.finished || a.started || a.added),
+    title: (a,b) => cmp(a.title, b.title), author: (a,b) => cmp(a.author, b.author) || cmp(a.title, b.title),
+    rating: (a,b) => (b.rating||0) - (a.rating||0) || cmp(a.title, b.title)
+  };
+  list.sort(sorters[libView.sort]);
+  $("#libCount").textContent = `${list.length} livre${list.length>1?"s":""}`;
+  $("#libGrid").innerHTML = list.length ? list.map(b => `
+    <button class="lib-item" data-libopen="${b.id}">
+      <span class="lib-cover" style="background:${b.color}">${b.cover ? `<img src="${esc(b.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}${b.cover ? "" : `<span>${esc(b.title)}</span>`}</span>
+      <span class="lib-t">${esc(b.title)}</span>
+      <span class="lib-a">${esc(b.author || "")}</span>
+      ${b.rating ? `<span class="lib-r">★ ${String(b.rating).replace(".", ",")}</span>` : ""}
+    </button>`).join("")
+    : `<p class="muted" style="grid-column:1/-1">${q ? "Aucun livre ne correspond à ta recherche." : "Aucun livre dans cette étagère pour l'instant."}</p>`;
+}
 
 function openForm(b){
   const isNew = !b;
   b = b || { color: COLORS[Math.floor(Math.random()*COLORS.length)], status: "en-cours", genre: "Fantasy" };
   openSheet(`
     <div class="sheet-top" style="background:${b.color}" id="formTop">
+      <button class="back" data-close ${isNew ? "" : `data-book="${b.id}"`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Retour</button>
       <h2>${isNew ? "Nouveau livre" : "Modifier le livre"}</h2><p>${isNew ? "Il rejoindra ton étagère." : esc(b.title)}</p>
-      <button class="close" data-close aria-label="Fermer">×</button>
     </div>
     <div class="sheet-body">
       ${isNew ? `<div class="search" id="searchBox">
@@ -526,9 +606,9 @@ function openBook(id){
   const b = book(id); if (!b) return closeSheet();
   openSheet(`
     <div class="sheet-top" style="background:${b.color}">
+      <button class="back" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Retour</button>
       <div class="top-flex">${b.cover?`<div class="cover"><img src="${esc(b.cover)}" alt="Couverture" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></div>`:""}
       <div><h2>${esc(b.title)}</h2><p>${esc(b.author || "Auteur inconnu")} · ${esc(b.genre||"")}</p></div></div>
-      <button class="close" data-close aria-label="Fermer">×</button>
     </div>
     <div class="sheet-body">
       <div class="field"><span class="lbl">Statut</span><div class="chips" id="bStatus">${STATUS.map(([k,l])=>`<button class="chip" data-s="${k}" aria-pressed="${k===b.status}">${l}</button>`).join("")}</div></div>
@@ -539,7 +619,7 @@ function openBook(id){
         <div class="line">Page <input type="number" id="bPage" min="0" max="${b.pages}" value="${b.current||0}"> sur ${b.pages}
           <button class="btn small" id="bPageSave" style="margin-left:auto">Enregistrer la page</button></div>
       </div>` : `<p class="muted">Ajoute le nombre de pages (bouton Modifier) pour suivre ta progression.</p>`}
-      <div class="field"><span class="lbl">Ma note</span><div class="stars" id="bStars">${[1,2,3,4,5].map(n=>`<button class="star ${n<=(b.rating||0)?"on":""}" data-n="${n}" aria-label="${n} sur 5">★</button>`).join("")}</div></div>
+      <div class="field"><span class="lbl" id="bRateLbl">Ma note</span><div class="rating"><div class="stars" id="bStars" role="slider" tabindex="0" aria-labelledby="bRateLbl" aria-valuemin="0" aria-valuemax="5"></div><span class="rate-txt" id="bRateTxt"></span></div></div>
       <div class="field"><label for="bNotes">Mon avis</label><textarea id="bNotes" placeholder="Ce que ce livre t'a fait ressentir, tes personnages préférés…">${esc(b.notes||"")}</textarea></div>
       <div class="field"><span class="lbl">Citations</span>
         <div id="bQuotes">${(b.quotes||[]).map(q=>`<div class="qitem"><div><p>${esc(q.text)}</p>${q.page?`<small>p. ${esc(q.page)}</small>`:""}</div><button data-delq="${q.id}" aria-label="Supprimer la citation">×</button></div>`).join("")}</div>
@@ -555,7 +635,24 @@ function openBook(id){
     $("#bPage").oninput = e => sync(Math.min(b.pages, +e.target.value||0));
     $("#bPageSave").onclick = () => { const before=b.status; setPage(b, +$("#bPage").value); if (b.status===before) toast("Page enregistrée"); openBook(id); };
   }
-  $("#bStars").onclick = e => { const n=+e.target.dataset.n; if(!n) return; b.rating = b.rating===n ? 0 : n; save(); $("#bStars").querySelectorAll(".star").forEach(s=>s.classList.toggle("on", +s.dataset.n<=b.rating)); };
+  const drawStars = () => {
+    const r = b.rating || 0, txt = r ? String(r).replace(".", ",") + " / 5" : "Pas encore noté";
+    $("#bStars").innerHTML = starsHTML(r);
+    $("#bStars").setAttribute("aria-valuenow", r); $("#bStars").setAttribute("aria-valuetext", txt);
+    $("#bRateTxt").textContent = txt;
+  };
+  const setRating = v => { v = Math.max(0, Math.min(5, Math.round(v*2)/2)); b.rating = v; save(); drawStars(); };
+  $("#bStars").onclick = e => {
+    const st = e.target.closest(".star"); if (!st) return;
+    const box = st.getBoundingClientRect(), n = +st.dataset.n;
+    const v = (e.clientX - box.left) < box.width / 2 ? n - 0.5 : n;
+    setRating(b.rating === v ? 0 : v);
+  };
+  $("#bStars").onkeydown = e => {
+    if (["ArrowRight","ArrowUp"].includes(e.key)) { e.preventDefault(); setRating((b.rating||0) + 0.5); }
+    if (["ArrowLeft","ArrowDown"].includes(e.key)) { e.preventDefault(); setRating((b.rating||0) - 0.5); }
+  };
+  drawStars();
   $("#bNotes").oninput = e => { b.notes = e.target.value; save(); };
   $("#bQAdd").onclick = () => {
     const text = $("#bQuote").value.trim(); if(!text){ $("#bQuote").focus(); return; }
@@ -573,9 +670,12 @@ function openBook(id){
 
 /* ---------- Événements ---------- */
 document.addEventListener("click", e => {
-  const o = e.target.closest("[data-open]"); if (o) return openBook(o.dataset.open);
+  const lo = e.target.closest("[data-libopen]"); if (lo) { history.pushState({ sheet: 2 }, ""); return openBook(lo.dataset.libopen); }
+  const o = e.target.closest("[data-open]"); if (o) { libView = null; return openBook(o.dataset.open); }
+  const l = e.target.closest("[data-lib]"); if (l) return openLibrary(l.dataset.lib);
   if (e.target.closest("[data-add]")) return openForm();
-  if (e.target.closest("[data-close]")) return closeSheet();
+  const c = e.target.closest("[data-close]");
+  if (c) return c.dataset.book ? openBook(c.dataset.book) : closeSheet();
 });
 $("#addBtn").onclick = () => openForm();
 $("#veil").addEventListener("click", e => { if (e.target.id==="veil") closeSheet(); });
